@@ -1,0 +1,18 @@
+<h1>Friends</h1>
+<form method='post'>
+    {% csrf_token %}
+    <input type='text' name='search' placeholder="email or username"/>
+    <input type='submit' />
+</form>
+<table>
+    <tr>
+        <th>username</th>
+        <th>email</th>
+    </tr>
+{% for result in results %}
+<tr>
+    <td>{{result.username}}</td>
+    <td>{{result.email}}</td>
+</tr>
+{% endfor %}
+</table>

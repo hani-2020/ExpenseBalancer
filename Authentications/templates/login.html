@@ -1,0 +1,16 @@
+<h1>Login</h1>
+<form method='post'>
+{% csrf_token %}
+<p>
+    <label>Email</label>
+    <input type='email' name='email'/>
+</p>
+<p>
+    <label>Password</label>
+    <input type='password' name='password'/>
+</p>
+<input type='submit' />    
+{% if error %}
+{{error}}
+{% endif %}
+<form>
