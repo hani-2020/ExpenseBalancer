@@ -1,0 +1,15 @@
+<h1>Pending Requests</h1>
+<table>
+    <tr>
+        <th>username</th>
+        <th>email</th>
+        <th>action</th>
+    </tr>
+{% for pending_request in pending_requests %}
+<tr>
+    <td>{{pending_request.from_user.username}}</td>
+    <td>{{pending_request.from_user.email}}</td>
+    <td><a href="{% url 'accept_request' pending_request.id %}">accept</a> | <a href=""{% url 'reject_request' pending_request.id %}"">reject</a></td>
+</tr>
+{% endfor %}
+</table>

@@ -1,18 +1,24 @@
-<h1>Friends</h1>
-<form method='post'>
+<h1>Find new friends</h1>
+<form method='post' action="{% url 'friends_page' %}">
     {% csrf_token %}
     <input type='text' name='search' placeholder="email or username"/>
     <input type='submit' />
 </form>
 <table>
-    <tr>
-        <th>username</th>
-        <th>email</th>
-    </tr>
+{% if error %}
+<h1>{{error}}</h1>
+{% else %}
+<tr>
+    <th>username</th>
+    <th>email</th>
+    <th>action</th>
+</tr>
 {% for result in results %}
 <tr>
     <td>{{result.username}}</td>
     <td>{{result.email}}</td>
+    <td><a href="{% url 'send_request' result.id %}">Send Request</a></td>
 </tr>
 {% endfor %}
+{% endif %}
 </table>

@@ -10,6 +10,6 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractBaseUser):
     username = models.CharField(max_length=50, blank=True)
     email = models.EmailField(unique=True)
-    friends = models.ManyToManyField('self', symmetrical=False, related_name='friendsfield', blank=True)
+    friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     objects = CustomUserManager()
     USERNAME_FIELD = 'email'

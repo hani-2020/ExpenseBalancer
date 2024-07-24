@@ -17,8 +17,8 @@ def signup(request):
 def userlogin(request):
     messages = {}
     if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
+        email = request.POST.get('email').strip()
+        password = request.POST.get('password').strip()
         user = authenticate(request, email=email, password=password)
         if user:
             login(request, user)

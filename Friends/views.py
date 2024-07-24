@@ -1,9 +1,43 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from Authentications.models import User
 from django.db.models import Q
+from .models import FriendRequests
 
 def friends_page(request):
-    results = None
+    context = {}
     if request.method == 'POST':
-        results = User.objects.filter(Q(username__icontains=request.POST['search']) | Q(email__icontains=request.POST['search']))
-    return render(request, 'friends.html', {'results':results})
+        search_query = request.POST.get('search').strip()
+        if search_query:
+            results = User.objects.filter(Q(username__icontains=search_query) | Q(email__icontains=search_query))
+            friend_ids = request.user.friends.values_list('id', flat=True)
+            results = results.exclude(Q(id=request.user.id) | Q(id__in=friend_ids))
+            context['results'] = results
+        else:
+            context['error'] = 'No such user'
+    return render(request, 'friends.html', context)
+
+def send_request(request, id):
+    to_user = User.objects.get(id=id)
+    if not FriendRequests.objects.filter(from_user=request.user, to_user=to_user).exists():
+        FriendRequests.objects.create(from_user=request.user, to_user=to_user)
+    return redirect(friends_page)
+
+def pending_requests(request):
+    pending_requests = FriendRequests.objects.filter(to_user=request.user)
+    return render(request, 'pending_requests.html', {'pending_requests':pending_requests})
+
+def accept_request(request, id):
+    friend = FriendRequests.objects.get(id=id)
+    friend.from_user.friends.add(friend.to_user)
+    friend.save()
+    friend.delete()
+    return redirect(pending_requests)
+
+def reject_request(request, id):
+    friend = FriendRequests.objects.get(id=id)
+    friend.delete()
+    return redirect(pending_requests)
+
+def see_friends(request):
+    friends = request.user.friends.all()
+    return render(request, 'see_friends.html', {'friends':friends})

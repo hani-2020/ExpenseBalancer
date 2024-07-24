@@ -1,0 +1,13 @@
+<h1>See Friends</h1>
+<table>
+    <tr>
+        <th>username</th>
+        <th>email</th>
+    </tr>
+{% for friend in friends %}
+<tr>
+    <td>{{friend.username}}</td>
+    <td>{{friend.email}}</td>
+</tr>
+{% endfor %}
+</table>

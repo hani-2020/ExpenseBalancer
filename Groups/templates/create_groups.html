@@ -1,0 +1,22 @@
+<h1>Create Groups</h1>
+<form method='post' action='create_groups'>
+    {% csrf_token %}
+    <label>Group name</label>
+    <br/>
+    <input type='text' name='group_name' />
+    {% if error %}
+    <div>{{error}}</div>
+    {% endif %}
+    <br/>
+    <label>Select group members</label>
+    <br/>
+    {% for friend in friends %}
+    <input type='checkbox' name='friends' value='{{friend.id}}' />
+    <label>{{friend.username}}</label>
+    <label>{{friend.email}}</label>
+    <br/>
+    {% empty %}
+    <h1>You have no friends to invite</h1>
+    {% endfor %}
+    <input type='submit' />
+</form>

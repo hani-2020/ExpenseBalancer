@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Authentications'
+    'Authentications',
+    'Friends',
+    'Groups'
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,10 @@ ROOT_URLCONF = 'ExpenseBalancer.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', 'Authentications/templates', 'Friends/templates'],
+        'DIRS': ['templates', 
+                 'Authentications/templates', 
+                 'Friends/templates'
+                 'Groups/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
