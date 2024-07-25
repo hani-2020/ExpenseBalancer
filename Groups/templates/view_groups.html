@@ -1,0 +1,41 @@
+<h1>Your Groups</h1>
+{% if error %}
+<div>{{error}}</div>
+{% endif %}
+<table>
+    <tr>
+        <th>Group Name</th>
+        <th>
+            <table>
+                <tr>
+                    <th>Members</th>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                </tr>
+            </table>
+        </th>
+        <th>Action</th>
+    </tr>
+{% for group in groups %}
+<tr>
+    <td>{{group.group_name}}</td>
+    <td>
+        <table>
+            {% for member in group.members.all %}
+            <tr>
+                <td>{{member.username}}</td>
+                <td>{{member.email}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </td>
+    <td><a href="{% url 'edit_group' id=group.id %}">Edit</a>{% if request.user == group.created_by %} | <a href='{% url 'delete_group' group.id %}' >Delete</a> {% else %} | <a href='{% url 'leave_group' group.id %}' >Leave Group</a> {% endif %}</td>
+</tr>
+{% empty %}
+<h1>You have no groups</h1>
+{% endfor %}
+</table>

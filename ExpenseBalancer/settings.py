@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Authentications',
     'Friends',
-    'Groups'
+    'Groups',
+    'Expenses'
 ]
 
 MIDDLEWARE = [

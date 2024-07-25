@@ -1,9 +1,13 @@
+{% if request.resolver_match.url_name == "edit_group" %}
+<h1>Edit Groups</h1>
+{% else %}
 <h1>Create Groups</h1>
-<form method='post' action='create_groups'>
+{% endif %}
+<form method='post' {% if request.resolver_match.url_name == "edit_group" %}action='{% url 'edit_group' group.id %}'{% else %}action='{% url 'create_groups' %}'{% endif %}>
     {% csrf_token %}
     <label>Group name</label>
     <br/>
-    <input type='text' name='group_name' />
+    <input type='text' name='group_name' {% if request.resolver_match.url_name == "edit_group" %} value={{group.group_name}} {% endif %}/>
     {% if error %}
     <div>{{error}}</div>
     {% endif %}
