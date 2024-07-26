@@ -19,6 +19,7 @@
             </table>
         </th>
         <th>Action</th>
+        <th>Expense Actions</th>
     </tr>
 {% for group in groups %}
 <tr>
@@ -27,13 +28,14 @@
         <table>
             {% for member in group.members.all %}
             <tr>
-                <td>{{member.username}}</td>
+                <td>{% if member.id == request.user.id %}You{% else %}{{member.username}}{% endif %}</td>
                 <td>{{member.email}}</td>
             </tr>
             {% endfor %}
         </table>
     </td>
     <td><a href="{% url 'edit_group' id=group.id %}">Edit</a>{% if request.user == group.created_by %} | <a href='{% url 'delete_group' group.id %}' >Delete</a> {% else %} | <a href='{% url 'leave_group' group.id %}' >Leave Group</a> {% endif %}</td>
+    <td><ul><a href="{% url 'create_expense' id=group.id %}">Create Expenses</a></ul></td>
 </tr>
 {% empty %}
 <h1>You have no groups</h1>

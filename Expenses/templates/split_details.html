@@ -1,0 +1,18 @@
+<h1>Split Details</h1>
+<form action="" method='post'>
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Amount/percent owed</th>
+        </tr>
+        {% for member in members %}
+        <tr>
+            <td>{% if request.user.id == member.id %}You{% else %}{{member.username}}{% endif %}</td>
+            <td>{{member.email}}</td>
+            <td><input type='number' name="{{member.id}}" {% if amount %}value="{{amount}}"{% endif %}/></td>
+        </tr>
+        {% endfor %}
+    </table>
+</form>

@@ -35,7 +35,7 @@ def edit_group(request, id):
         if group_name=="":
             context['error'] = 'Group must have a name'
             return render(request, 'create_groups.html', context)
-        friends = request.POST.get('friends')
+        friends = request.POST.getlist('friends')
         group.group_name = group_name
         if friends:
             group.members.add(*friends)

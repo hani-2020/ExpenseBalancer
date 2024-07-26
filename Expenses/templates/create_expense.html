@@ -1,1 +1,35 @@
 <h1>Create Expense</h1>
+<form action="{% url 'create_expense' id=group.id %}" method='post'>
+    {% if error %}
+    <h1>{{error}}</h1>
+    {% endif %}
+    {% csrf_token %}
+    <label>Amount</label>
+    <input name='amount' type='number'/>
+    <br/>
+    <label>Description</label>
+    <input name='description' type="text" />
+    <br />
+    <label>Date</label>
+    <input name='date' type="date" />
+    <br/>
+    <br/>
+    <label>Paid by</label>
+    <select name="paidby">
+        <option value="{{request.user.id}}" selected="selected">You</option>
+        {% for member in members %}
+        {% if member.id != request.user.id %}
+        <option value="{{member.id}}">{{member.username}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    <br/>
+    <label>Split method</label>
+    <select name="splitmethod">
+        <option value="1" selected='selected'>Equal</option>
+        <option value="2">Percentage</option>
+        <option value="3">Custom</option>
+    </select>
+    <br/>
+    <input type='submit' />
+</form>

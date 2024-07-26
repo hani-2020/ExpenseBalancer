@@ -13,3 +13,9 @@ class Expenses(models.Model):
         choices=[(1,'Split equally'),(2,'percentage'),(3,'Custom'),],
         default=1,
     )
+
+class Split(models.Model):
+    payer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    expense = models.ForeignKey(Expenses, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
