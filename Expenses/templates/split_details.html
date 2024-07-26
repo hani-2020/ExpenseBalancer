@@ -1,5 +1,5 @@
 <h1>Split Details</h1>
-<form action="" method='post'>
+<form method='post' action='{% url 'save_split' expense_id=expense.id %}'>
     {% csrf_token %}
     <table>
         <tr>
@@ -15,4 +15,5 @@
         </tr>
         {% endfor %}
     </table>
+    <input type='submit'/>
 </form>

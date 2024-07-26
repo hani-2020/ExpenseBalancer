@@ -22,8 +22,19 @@ def create_expense(request, id):
             return render(request, 'create_expense.html', context)
         expense = Expenses.objects.create(amount=amount, description=description, date=date, paid_by=paid_by, group=group, split_method=split_method)
         expense.save()
+        context['expense'] = expense
         if split_method=='1':
             amount = int(amount)/len(members)
             context['amount'] = amount
         return render(request, 'split_details.html', context)
     return render(request, 'create_expense.html', context)
+
+def save_split(request, expense_id):
+    if request.method=='POST':
+        expense = Expenses.objects.get(id=expense_id)
+        if expense.split_method == 1:
+            members = expense.group.members.all()
+            amount = expense.amount/len(members)
+            for member in members:
+                Split.objects.create(payer=member, expense=expense, amount=amount)
+            return redirect('view_groups')
