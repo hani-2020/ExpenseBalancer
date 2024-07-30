@@ -23,7 +23,7 @@
     </tr>
 {% for group in groups %}
 <tr>
-    <td>{{group.group_name}}</td>
+    <td><a href="{% url 'view_group_expenses' group_id=group.id %}">{{group.group_name}}</a></td>
     <td>
         <table>
             {% for member in group.members.all %}

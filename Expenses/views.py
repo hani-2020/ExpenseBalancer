@@ -3,7 +3,6 @@ from Groups.models import Group
 from .models import Expenses, Split
 from Authentications.models import User
 
-
 def save_split_helper(request, key, percents_or_amounts, expense, splits):
     if key != 'csrfmiddlewaretoken':
         rate_or_amount = request.POST.get(key)
@@ -31,7 +30,7 @@ def create_expense(request, id):
         date = request.POST.get('date')
         paid_by = request.POST.get('paidby')
         paid_by = User.objects.get(id=paid_by)
-        split_method = request.POST.get('splitmethod')
+        split_method = int(request.POST.get('splitmethod'))
         if not amount:
             context['error'] = "Amount field must not be empty"
             return render(request, 'create_expense.html', context)
@@ -43,7 +42,7 @@ def create_expense(request, id):
             expense.date = date
         expense.save()
         context['expense'] = expense
-        if split_method == '1':
+        if split_method == 1:
             amount = int(amount)/len(members)
             context['amount'] = amount
         return render(request, 'split_details.html', context)
@@ -88,7 +87,28 @@ def view_expenses(request):
     expenses = []
     for split in splits:
         expenses.append(split.expense)
-    context = {
-        'expenses':expenses
-    }
+    context = {'splits':splits}
     return render(request, 'view_expenses.html', context)
+
+def view_group_expenses(request, group_id):
+    expenses = Expenses.objects.filter(group=group_id)
+    expense_list = []
+    for expense in expenses:
+        object = {
+            'expense':expense,
+            'split':expense.expenses_split.filter(payer=request.user).first(),
+        }
+        expense_list.append(object)
+    context = {'expense_list':expense_list}
+    return render(request, 'view_group_expenses.html', context)
+
+#to do
+#join group emails (like my blackjack app)
+#paid_by user should not be billed instead it should show how much he should be payed (he can be given neagtive balnce equal to the 
+# total amount remove him from the split pages, if conditions will check if member is paidby user and do what is required)
+#only paid_by user can edit and delete expense (have not implemented edit or delete functionality)
+#display amount of money to give, recieve and the people associated with it (doing no.2 will do alot of this)
+#dashboard (doing no.2 will do alot of this)
+#unit testing (must learn, will probably have to add alot of validations, change login page to forms)
+#remove unwanted fields from models
+#ui (make this look cleaner. bootstrap???)

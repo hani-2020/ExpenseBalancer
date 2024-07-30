@@ -1,0 +1,25 @@
+<h1>All group expenses</h1>
+<table>
+    <tr>
+        <th>Total Expense</th>
+        <th>Description</th>
+        <th>Amount owed</th>
+        <th>Date</th>
+        <th>Action</th>
+    </tr>
+    {% for item in expense_list %}
+        <tr>
+            <td>{{item.expense.amount}}</td>
+            <td>{{item.expense.description}}</td>
+            {% if item.split %}
+            <td>{{item.split.amount}}</td>
+            <td>{{item.expense.date}}</td>
+            <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+            {% else %}
+            <td>None</td>
+            <td>{{item.expense.date}}</td>
+            <td>No action</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>

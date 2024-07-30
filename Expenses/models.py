@@ -15,6 +15,6 @@ class Expenses(models.Model):
     )
 
 class Split(models.Model):
-    payer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    expense = models.ForeignKey(Expenses, on_delete=models.CASCADE)
+    payer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="expenses_payer")
+    expense = models.ForeignKey(Expenses, on_delete=models.CASCADE, related_name="expenses_split")
     amount = models.DecimalField(max_digits=10, decimal_places=2)

@@ -1,4 +1,21 @@
 <h1>View all your expenses</h1>
-{% for expense in expenses %}
-<div>{{expense}}</div>
-{% endfor %}
+<table>
+    <tr>
+        <th>Total Expense</th>
+        <th>Expense Description</th>
+        <th>Group</th>
+        <th>Amount owed</th>
+        <th>Date</th>
+        <th>Action</th>
+    </tr>
+    {% for split in splits %}
+    <tr>
+        <td>{{split.expense.amount}}</td>
+        <td>{{split.expense.description}}</td>
+        <td>{{split.expense.group.group_name}}</td>
+        <td>{{split.amount}}</td>
+        <td>{{split.expense.date}}</td>
+        <td><a href="#">Edit</a> | <a href="#">Delete</a</td>
+    </tr>
+    {% endfor %}
+</table>
