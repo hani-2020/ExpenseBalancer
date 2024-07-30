@@ -1,19 +1,37 @@
-<h1>Split Details</h1>
-<form method='post' action='{% url 'save_split' expense_id=expense.id %}'>
-    {% csrf_token %}
-    <table>
-        <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Amount/percent owed</th>
-        </tr>
-        {% for member in members %}
-        <tr>
-            <td>{% if request.user.id == member.id %}You{% else %}{{member.username}}{% endif %}</td>
-            <td>{{member.email}}</td>
-            <td><input type='number' name="{{member.id}}" {% if amount %}value="{{amount}}"{% endif %}/></td>
-        </tr>
-        {% endfor %}
-    </table>
-    <input type='submit'/>
-</form>
+<div>
+    <h1>Split Details</h1>
+    <form method='post' action='{% url 'save_split' expense_id=expense.id %}'>
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Email</th>
+                {% if expense.split_method == 2 %}<th>percent owed</th>{% endif %}
+                <th>Amount owed</th>
+            </tr>
+            {% for member in members %}
+            <tr>
+                <td>{% if request.user.id == member.id %}You{% else %}{{member.username}}{% endif %}</td>
+                <td>{{member.email}}</td>
+                <td><input type='number' name="{{member.id}}" id="{{member.id}}" {% if amount %}value="{{amount}}"{% endif %} {% if expense.split_method == 2 %}oninput="amountChange({{member.id}})"{% endif %}/></td>
+                {% if expense.split_method == 2 %}<td id='amount-{{member.id}}'>0</td>{% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        <input type='submit'/>
+        {% if error %}
+        <div>{{error}}</div>
+        {% endif %}
+    </form>
+</div>
+{% if expense.split_method == 2 %}
+<script>
+    function amountChange(id){
+        let percentage = document.getElementById(id).value;
+        const amount = {{expense.amount}};
+        amountOwed = amount * percentage/100;
+        reqId = 'amount-'+id;
+        document.getElementById(reqId).innerHTML = amountOwed;
+    }
+</script>
+{% endif %}
