@@ -12,7 +12,7 @@
             <td>{{item.expense.amount}}</td>
             <td>{{item.expense.description}}</td>
             {% if item.split %}
-            <td>{{item.split.amount}}</td>
+            <td><a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">{{item.split.amount}}</a></td>
             <td>{{item.expense.date}}</td>
             <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
             {% else %}

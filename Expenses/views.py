@@ -110,6 +110,11 @@ def view_group_expenses(request, group_id):
     context = {'expense_list':expense_list}
     return render(request, 'view_group_expenses.html', context)
 
+def view_expense_breakup(request, expense_id):
+    expense = Expenses.objects.get(id=expense_id)
+    splits = Split.objects.filter(expense=expense)
+    print(splits)
+
 #to do
 #join group emails (like my blackjack app)
 #paid_by user should not be billed instead it should show how much he should be payed (he can be given neagtive balnce equal to the 
