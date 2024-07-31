@@ -12,9 +12,13 @@ def save_split_helper(request, key, percents_or_amounts, expense, splits):
             member = User.objects.get(id=key)
             if expense.split_method==2:
                 amount = float(expense.amount) * rate_or_amount/100
-            if expense.split_method==3:
+            elif expense.split_method==3:
                 amount = rate_or_amount
-            split = Split(payer=member, expense=expense, amount=amount)
+            if member == expense.paid_by:
+                val = float(expense.amount) - amount
+                split = Split(payer=member, expense=expense, amount=-val)
+            else:
+                split = Split(payer=member, expense=expense, amount=amount)
             splits.append(split)
 
 def create_expense(request, id):
@@ -59,7 +63,11 @@ def save_split(request, expense_id):
         if expense.split_method == 1:
             amount = expense.amount/len(members)
             for member in members:
-                Split.objects.create(payer=member, expense=expense, amount=amount)
+                if member == expense.paid_by:
+                    val = float(expense.amount) - amount
+                    Split.objects.create(payer=member, expense=expense, amount=-val)
+                else:
+                    Split.objects.create(payer=member, expense=expense, amount=amount)
         elif expense.split_method == 2:
             percents = []
             splits = []
@@ -105,7 +113,7 @@ def view_group_expenses(request, group_id):
 #to do
 #join group emails (like my blackjack app)
 #paid_by user should not be billed instead it should show how much he should be payed (he can be given neagtive balnce equal to the 
-# total amount remove him from the split pages, if conditions will check if member is paidby user and do what is required)
+# total amount removed from him from the split pages, if conditions will check if member is paidby user and do what is required)->done
 #only paid_by user can edit and delete expense (have not implemented edit or delete functionality)
 #display amount of money to give, recieve and the people associated with it (doing no.2 will do alot of this)
 #dashboard (doing no.2 will do alot of this)
