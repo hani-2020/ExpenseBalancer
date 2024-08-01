@@ -1,7 +1,7 @@
 <h1>All group expenses</h1>
 <table>
     <tr>
-        <th>Total Expense</th>
+        <th>Requested By</th>
         <th>Description</th>
         <th>Amount owed</th>
         <th>Date</th>
@@ -9,16 +9,16 @@
     </tr>
     {% for item in expense_list %}
         <tr>
-            <td>{{item.expense.amount}}</td>
+            <td>{{item.expense.paid_by.username}}</td>
             <td>{{item.expense.description}}</td>
-            {% if item.split %}
-            <td><a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">{{item.split.amount}}</a></td>
+            {% if item.expense.paid_by == request.user %}
+            <td>{% if item.split.amount %}{{item.split.amount}}{% else %}None{% endif %}</td>
             <td>{{item.expense.date}}</td>
-            <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+            <td><a href="#">Edit</a> | <a href="#">Delete</a>{% if item.split.amount or item.expense.paid_by == request.user %} | <a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% endif %}</td>
             {% else %}
             <td>None</td>
             <td>{{item.expense.date}}</td>
-            <td>No action</td>
+            <td>{% if item.split.amount %}<a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% else %}None{% endif %}</td>
             {% endif %}
         </tr>
     {% endfor %}

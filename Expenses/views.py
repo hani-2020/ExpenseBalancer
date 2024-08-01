@@ -14,11 +14,12 @@ def save_split_helper(request, key, percents_or_amounts, expense, splits):
                 amount = float(expense.amount) * rate_or_amount/100
             elif expense.split_method==3:
                 amount = rate_or_amount
-            if member == expense.paid_by:
-                val = float(expense.amount) - amount
-                split = Split(payer=member, expense=expense, amount=-val)
-            else:
-                split = Split(payer=member, expense=expense, amount=amount)
+            # if member == expense.paid_by:
+            #     val = float(expense.amount) - amount
+            #     split = Split(payer=member, expense=expense, amount=-val)
+            # else:
+            #     split = Split(payer=member, expense=expense, amount=amount)
+            split = Split(payer=member, expense=expense, amount=amount)
             splits.append(split)
 
 def create_expense(request, id):
@@ -63,11 +64,12 @@ def save_split(request, expense_id):
         if expense.split_method == 1:
             amount = expense.amount/len(members)
             for member in members:
-                if member == expense.paid_by:
-                    val = float(expense.amount) - amount
-                    Split.objects.create(payer=member, expense=expense, amount=-val)
-                else:
-                    Split.objects.create(payer=member, expense=expense, amount=amount)
+                # if member == expense.paid_by:
+                #     val = float(expense.amount) - amount
+                #     Split.objects.create(payer=member, expense=expense, amount=-val)
+                # else:
+                #     Split.objects.create(payer=member, expense=expense, amount=amount)
+                Split.objects.create(payer=member, expense=expense, amount=amount)
         elif expense.split_method == 2:
             percents = []
             splits = []
@@ -88,14 +90,13 @@ def save_split(request, expense_id):
                 return render(request, 'split_details.html', context)
             for split in splits:
                 split.save()
-    return redirect('view_groups')
+        return redirect('view_groups')
+    return render(request, 'split_details.html', context)
 
 def view_expenses(request):
     splits =  Split.objects.filter(payer=request.user)
-    expenses = []
-    for split in splits:
-        expenses.append(split.expense)
-    context = {'splits':splits}
+    expenses = Expenses.objects.filter(paid_by=request.user)
+    context = {'splits':splits, 'expenses':expenses}
     return render(request, 'view_expenses.html', context)
 
 def view_group_expenses(request, group_id):
@@ -113,14 +114,35 @@ def view_group_expenses(request, group_id):
 def view_expense_breakup(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
     splits = Split.objects.filter(expense=expense)
-    print(splits)
+    for split in splits:
+        split.amount = abs(split.amount)
+    context = {'expense':expense,
+               'splits':splits}
+    return render(request, 'view_expense_breakup.html', context)
 
+def edit_expense(request, expense_id):
+    expense = Expenses.objects.get(id=expense_id)
+    group = Group.objects.get(id=expense.group.id)
+    members = group.members.all()
+    context = {'expense':expense, 'group':group, 'members':members}
+    if request.method == 'POST':
+        expense.amount = float(request.POST.get('amount'))
+        expense.description = request.POST.get('description')
+        date = request.POST.get('date')
+        if date:
+            expense.date = date
+        paid_by = request.POST.get('paidby')
+        expense.paid_by = User.objects.get(id=paid_by)
+        expense.split_method = int(request.POST.get('splitmethod'))
+        expense.save()
+        if expense.split_method == 1:
+            amount = int(expense.amount)/len(members)
+            context['amount'] = amount
+        return render(request, 'split_details.html', context)
+    return render(request, 'create_expense.html', context)
 #to do
 #join group emails (like my blackjack app)
-#paid_by user should not be billed instead it should show how much he should be payed (he can be given neagtive balnce equal to the 
-# total amount removed from him from the split pages, if conditions will check if member is paidby user and do what is required)->done
 #only paid_by user can edit and delete expense (have not implemented edit or delete functionality)
-#display amount of money to give, recieve and the people associated with it (doing no.2 will do alot of this)
 #dashboard (doing no.2 will do alot of this)
 #unit testing (must learn, will probably have to add alot of validations, change login page to forms)
 #remove unwanted fields from models

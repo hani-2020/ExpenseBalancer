@@ -1,0 +1,17 @@
+<h1>Expense Breakup</h1>
+<h2>Total Amount: {{expense.amount}}</h2>
+<h2>Pay to: {{expense.paid_by.username}}</h2>
+<table>
+    {% for split in splits %}
+    <tr>
+        <td>
+            <h3>{{split.amount}} by {{split.payer.username}}</h3>
+        </td>
+        <td>
+            {% if split.payer == request.user and split.payer != expense.paid_by %}
+            <h3><a href="#">Pay</a></h3>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
