@@ -7,16 +7,17 @@
         <th>Date</th>
         <th>Action</th>
     </tr>
+    <!--if i am test1 and test1 requested amount test1 should not see amount owed-->
     {% for item in expense_list %}
         <tr>
             <td>{{item.expense.paid_by.username}}</td>
             <td>{{item.expense.description}}</td>
             {% if item.expense.paid_by == request.user %}
-            <td>{% if item.split.amount %}{{item.split.amount}}{% else %}None{% endif %}</td>
-            <td>{{item.expense.date}}</td>
-            <td><a href="#">Edit</a> | <a href="#">Delete</a>{% if item.split.amount or item.expense.paid_by == request.user %} | <a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% endif %}</td>
-            {% else %}
             <td>None</td>
+            <td>{{item.expense.date}}</td>
+            <td><a href="{% url 'edit_expense' expense_id=item.expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=item.expense.id %}">Delete</a>{% if item.split.amount or item.expense.paid_by == request.user %} | <a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% endif %}</td>
+            {% else %}
+            <td>{% if item.split.amount %}{{item.split.amount}}{% else %}None{% endif %}</td>
             <td>{{item.expense.date}}</td>
             <td>{% if item.split.amount %}<a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% else %}None{% endif %}</td>
             {% endif %}

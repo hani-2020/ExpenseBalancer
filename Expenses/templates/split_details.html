@@ -13,7 +13,7 @@
             <tr>
                 <td>{% if request.user.id == member.id %}You{% else %}{{member.username}}{% endif %}</td>
                 <td>{{member.email}}</td>
-                <td><input type='number' name="{{member.id}}" id="{{member.id}}" {% if amount %}value="{{amount}}"{% endif %} {% if expense.split_method == 2 %}oninput="amountChange({{member.id}})"{% endif %}/></td>
+                <td><input type='number' name="{{member.id}}" id="{{member.id}}" {% if amount %}value="{{amount}}" readonly{% endif %} {% if expense.split_method == 2 %}oninput="amountChange({{member.id}})"{% endif %}/></td>
                 {% if expense.split_method == 2 %}<td id='amount-{{member.id}}'>0</td>{% endif %}
             </tr>
             {% endfor %}

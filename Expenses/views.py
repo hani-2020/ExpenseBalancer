@@ -14,11 +14,6 @@ def save_split_helper(request, key, percents_or_amounts, expense, splits):
                 amount = float(expense.amount) * rate_or_amount/100
             elif expense.split_method==3:
                 amount = rate_or_amount
-            # if member == expense.paid_by:
-            #     val = float(expense.amount) - amount
-            #     split = Split(payer=member, expense=expense, amount=-val)
-            # else:
-            #     split = Split(payer=member, expense=expense, amount=amount)
             split = Split(payer=member, expense=expense, amount=amount)
             splits.append(split)
 
@@ -55,6 +50,7 @@ def create_expense(request, id):
 
 def save_split(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
+    Split.objects.filter(expense=expense).delete()
     members = expense.group.members.all()
     context = {
         'expense':expense,
@@ -64,11 +60,6 @@ def save_split(request, expense_id):
         if expense.split_method == 1:
             amount = expense.amount/len(members)
             for member in members:
-                # if member == expense.paid_by:
-                #     val = float(expense.amount) - amount
-                #     Split.objects.create(payer=member, expense=expense, amount=-val)
-                # else:
-                #     Split.objects.create(payer=member, expense=expense, amount=amount)
                 Split.objects.create(payer=member, expense=expense, amount=amount)
         elif expense.split_method == 2:
             percents = []
@@ -140,10 +131,15 @@ def edit_expense(request, expense_id):
             context['amount'] = amount
         return render(request, 'split_details.html', context)
     return render(request, 'create_expense.html', context)
+
+def delete_expense(request, expense_id):
+    expense = Expenses.objects.get(id=expense_id)
+    expense.delete()
+    referer = request.META.get('HTTP_REFERER', '/')
+    return redirect(referer)
+
 #to do
 #join group emails (like my blackjack app)
-#only paid_by user can edit and delete expense (have not implemented edit or delete functionality)
-#dashboard (doing no.2 will do alot of this)
 #unit testing (must learn, will probably have to add alot of validations, change login page to forms)
 #remove unwanted fields from models
 #ui (make this look cleaner. bootstrap???)
