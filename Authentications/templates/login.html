@@ -1,6 +1,10 @@
 <h1>Login</h1>
 <form method='post' action="{% url 'login' %}">
 {% csrf_token %}
+{% if joingroup %}
+<input type='hidden' name='group_id' value="{{joingroup}}"/>
+<input type='hidden' name='user_id' value="{{joingroupuser}}"/>
+{% endif %}
 <p>
     <label>Email</label>
     <input type='email' name='email'/>

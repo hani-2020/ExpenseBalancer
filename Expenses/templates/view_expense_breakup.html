@@ -9,7 +9,7 @@
         </td>
         <td>
             {% if split.payer == request.user and split.payer != expense.paid_by %}
-            <h3><a href="#">Pay</a></h3>
+            <h3><a href="{% url 'pay_expense' split_id=split.id %}">Pay</a></h3>
             {% endif %}
         </td>
     </tr>

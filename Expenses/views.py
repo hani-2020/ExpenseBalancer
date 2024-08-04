@@ -56,7 +56,7 @@ def save_split(request, expense_id):
         'expense':expense,
         'members':members
     }
-    if request.method=='POST':
+    if request.method=='POST' and request.user == expense.paid_by:
         if expense.split_method == 1:
             amount = expense.amount/len(members)
             for member in members:
@@ -87,7 +87,18 @@ def save_split(request, expense_id):
 def view_expenses(request):
     splits =  Split.objects.filter(payer=request.user)
     expenses = Expenses.objects.filter(paid_by=request.user)
-    context = {'splits':splits, 'expenses':expenses}
+    expenselist = []
+    for expense in expenses:
+        temp = {
+            'id':expense.id,
+            'amount':expense.amount,
+            'description':expense.description,
+            'group_name':expense.group.group_name,
+            'amount_owed':expense.amount - Split.objects.get(expense=expense, payer=request.user).amount,
+            'date':expense.date
+        }
+        expenselist.append(temp)
+    context = {'splits':splits, 'expenses':expenselist}
     return render(request, 'view_expenses.html', context)
 
 def view_group_expenses(request, group_id):
@@ -116,7 +127,7 @@ def edit_expense(request, expense_id):
     group = Group.objects.get(id=expense.group.id)
     members = group.members.all()
     context = {'expense':expense, 'group':group, 'members':members}
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user == expense.paid_by:
         expense.amount = float(request.POST.get('amount'))
         expense.description = request.POST.get('description')
         date = request.POST.get('date')
@@ -134,12 +145,21 @@ def edit_expense(request, expense_id):
 
 def delete_expense(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
-    expense.delete()
+    if request.user == expense.paid_by:
+        expense.delete()
     referer = request.META.get('HTTP_REFERER', '/')
     return redirect(referer)
 
+def pay_expense(request, split_id):
+    split = Split.objects.get(id=split_id)
+    context={}
+    if split.payer != request.user:
+        context['error'] = "You can't pay that split"
+        return render(request, 'view_expense_breakup.html', context)
+    split.delete()
+    return redirect('homepage')
+
 #to do
-#join group emails (like my blackjack app)
 #unit testing (must learn, will probably have to add alot of validations, change login page to forms)
 #remove unwanted fields from models
 #ui (make this look cleaner. bootstrap???)

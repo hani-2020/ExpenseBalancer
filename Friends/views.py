@@ -28,14 +28,16 @@ def pending_requests(request):
 
 def accept_request(request, id):
     friend = FriendRequests.objects.get(id=id)
-    friend.from_user.friends.add(friend.to_user)
-    friend.save()
-    friend.delete()
+    if request.user == friend.to_user:
+        friend.from_user.friends.add(friend.to_user)
+        friend.save()
+        friend.delete()
     return redirect(pending_requests)
 
 def reject_request(request, id):
     friend = FriendRequests.objects.get(id=id)
-    friend.delete()
+    if request.user == friend.to_user:
+        friend.delete()
     return redirect(pending_requests)
 
 def see_friends(request):

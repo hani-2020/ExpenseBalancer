@@ -9,7 +9,7 @@
 <tr>
     <td>{{pending_request.from_user.username}}</td>
     <td>{{pending_request.from_user.email}}</td>
-    <td><a href="{% url 'accept_request' pending_request.id %}">accept</a> | <a href=""{% url 'reject_request' pending_request.id %}"">reject</a></td>
+    <td><a href="{% url 'accept_request' pending_request.id %}">accept</a> | <a href="{% url 'reject_request' pending_request.id %}">reject</a></td>
 </tr>
 {% endfor %}
 </table>
