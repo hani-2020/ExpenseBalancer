@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from Authentications.models import User
 from django.db.models import Q
 from .models import FriendRequests
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def friends_page(request):
     context = {}
     if request.method == 'POST':
@@ -16,16 +18,19 @@ def friends_page(request):
             context['error'] = 'No such user'
     return render(request, 'friends.html', context)
 
+@login_required
 def send_request(request, id):
     to_user = User.objects.get(id=id)
     if not FriendRequests.objects.filter(from_user=request.user, to_user=to_user).exists():
         FriendRequests.objects.create(from_user=request.user, to_user=to_user)
     return redirect(friends_page)
 
+@login_required
 def pending_requests(request):
     pending_requests = FriendRequests.objects.filter(to_user=request.user)
     return render(request, 'pending_requests.html', {'pending_requests':pending_requests})
 
+@login_required
 def accept_request(request, id):
     friend = FriendRequests.objects.get(id=id)
     if request.user == friend.to_user:
@@ -34,12 +39,14 @@ def accept_request(request, id):
         friend.delete()
     return redirect(pending_requests)
 
+@login_required
 def reject_request(request, id):
     friend = FriendRequests.objects.get(id=id)
     if request.user == friend.to_user:
         friend.delete()
     return redirect(pending_requests)
 
+@login_required
 def see_friends(request):
     friends = request.user.friends.all()
     return render(request, 'see_friends.html', {'friends':friends})

@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import CustomUserCreationForm
 from Expenses.models import Split
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
     context = {}
     if request.user.is_authenticated:

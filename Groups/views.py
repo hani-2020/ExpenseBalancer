@@ -19,6 +19,7 @@ def send_mail_helper(request, recipientlist, group):
         msglist.append(msg)
     send_mass_mail(tuple(msglist), fail_silently=False)
 
+@login_required
 def create_groups(request):
     context = {}
     friends = request.user.friends.all()
@@ -37,12 +38,14 @@ def create_groups(request):
         group.save()
     return render(request, 'create_groups.html', context)
 
+@login_required
 def view_groups(request):
     context = {}
     groups = request.user.group_members.all()
     context['groups'] = groups
     return render(request, 'view_groups.html', {'groups':groups})
 
+@login_required
 def edit_group(request, id):
     context = {}
     group = Group.objects.get(id=id)
@@ -64,12 +67,14 @@ def edit_group(request, id):
         return redirect('view_groups')
     return render(request, 'create_groups.html', context)
 
+@login_required
 def delete_group(request, id):
     group = Group.objects.get(id=id)
     if request.user == group.created_by:
         group.delete()
     return redirect('view_groups')
 
+@login_required
 def leave_group(request, id):
     group = Group.objects.get(id=id)
     if request.user != group.created_by:

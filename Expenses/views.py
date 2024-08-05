@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from Groups.models import Group
 from .models import Expenses, Split
 from Authentications.models import User
+from django.contrib.auth.decorators import login_required
 
 def save_split_helper(request, key, percents_or_amounts, expense, splits):
     if key != 'csrfmiddlewaretoken':
@@ -17,6 +18,7 @@ def save_split_helper(request, key, percents_or_amounts, expense, splits):
             split = Split(payer=member, expense=expense, amount=amount)
             splits.append(split)
 
+@login_required
 def create_expense(request, id):
     group = Group.objects.get(id=id)
     members = group.members.all()
@@ -48,6 +50,7 @@ def create_expense(request, id):
         return render(request, 'split_details.html', context)
     return render(request, 'create_expense.html', context)
 
+@login_required
 def save_split(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
     Split.objects.filter(expense=expense).delete()
@@ -84,23 +87,29 @@ def save_split(request, expense_id):
         return redirect('view_groups')
     return render(request, 'split_details.html', context)
 
+@login_required
 def view_expenses(request):
     splits =  Split.objects.filter(payer=request.user)
     expenses = Expenses.objects.filter(paid_by=request.user)
     expenselist = []
     for expense in expenses:
+        split = Split.objects.filter(expense=expense, payer=request.user).first()
+        amount = 0
+        if split:
+            amount = expense.amount - split.amount
         temp = {
             'id':expense.id,
             'amount':expense.amount,
             'description':expense.description,
             'group_name':expense.group.group_name,
-            'amount_owed':expense.amount - Split.objects.get(expense=expense, payer=request.user).amount,
+            'amount_owed':amount,
             'date':expense.date
         }
         expenselist.append(temp)
     context = {'splits':splits, 'expenses':expenselist}
     return render(request, 'view_expenses.html', context)
 
+@login_required
 def view_group_expenses(request, group_id):
     expenses = Expenses.objects.filter(group=group_id)
     expense_list = []
@@ -113,6 +122,7 @@ def view_group_expenses(request, group_id):
     context = {'expense_list':expense_list}
     return render(request, 'view_group_expenses.html', context)
 
+@login_required
 def view_expense_breakup(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
     splits = Split.objects.filter(expense=expense)
@@ -122,6 +132,7 @@ def view_expense_breakup(request, expense_id):
                'splits':splits}
     return render(request, 'view_expense_breakup.html', context)
 
+@login_required
 def edit_expense(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
     group = Group.objects.get(id=expense.group.id)
@@ -143,6 +154,7 @@ def edit_expense(request, expense_id):
         return render(request, 'split_details.html', context)
     return render(request, 'create_expense.html', context)
 
+@login_required
 def delete_expense(request, expense_id):
     expense = Expenses.objects.get(id=expense_id)
     if request.user == expense.paid_by:
@@ -150,6 +162,7 @@ def delete_expense(request, expense_id):
     referer = request.META.get('HTTP_REFERER', '/')
     return redirect(referer)
 
+@login_required
 def pay_expense(request, split_id):
     split = Split.objects.get(id=split_id)
     context={}
