@@ -1,44 +1,52 @@
-<h1>Create Expense</h1>
-<form {% if expense %}action="{% url 'edit_expense' expense_id=expense.id %}"{% else %}action="{% url 'create_expense' id=group.id %}"{% endif %} method='post'>
-    {% if error %}
-    <h1>{{error}}</h1>
-    {% endif %}
-    {% csrf_token %}
-    <label>Amount</label>
-    <input name='amount' type='number' {% if expense %}value='{{expense.amount}}'{% endif %}/>
-    <br/>
-    <label>Description</label>
-    <input name='description' type="text" {% if expense %}value='{{expense.description}}'{% endif %}/>
-    <br />
-    <label>Date</label>
-    <input name='date' type="date" {% if expense %}value='{{expense.date}}'{% endif %}/>
-    <br/>
-    <br/>
-    <label>Paid by</label>
-    <select name="paidby">
-        {% if expense %}
-        <option value="{{expense.paid_by.id}}" selected="selected">{% if expense.paid_by.id == request.user.id %}You{% else %}{{expense.paid_by.username}}{% endif %}</option>
-        {% for member in members %}
-        {% if member.id != request.user.id %}
-        <option value="{{member.id}}">{% if member.id == request.user.id %}You{% else %}{{member.username}}{% endif %}</option>
-        {% endif %}
-        {% endfor %}
-        {% else %}
-        <option value="{{request.user.id}}" selected="selected">You</option>
-        {% for member in members %}
-        {% if member.id != request.user.id %}
-        <option value="{{member.id}}">{{member.username}}</option>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
-    </select>
-    <br/>
-    <label>Split method</label>
-    <select name="splitmethod">
-        <option value="1" selected='selected'>Equal</option>
-        <option value="2">Percentage</option>
-        <option value="3">Custom</option>
-    </select>
-    <br/>
-    <input type='submit' />
-</form>
+{% extends 'header.html' %}
+<html>
+    <head>
+        
+    </head>
+    <body>
+        <h1>Create Expense</h1>
+        <form {% if expense %}action="{% url 'edit_expense' expense_id=expense.id %}"{% else %}action="{% url 'create_expense' id=group.id %}"{% endif %} method='post'>
+            {% if error %}
+            <h1>{{error}}</h1>
+            {% endif %}
+            {% csrf_token %}
+            <label>Amount</label>
+            <input name='amount' type='number' {% if expense %}value='{{expense.amount}}'{% endif %}/>
+            <br/>
+            <label>Description</label>
+            <input name='description' type="text" {% if expense %}value='{{expense.description}}'{% endif %}/>
+            <br />
+            <label>Date</label>
+            <input name='date' type="date" {% if expense %}value='{{expense.date}}'{% endif %}/>
+            <br/>
+            <br/>
+            <label>Paid by</label>
+            <select name="paidby">
+                {% if expense %}
+                <option value="{{expense.paid_by.id}}" selected="selected">{% if expense.paid_by.id == request.user.id %}You{% else %}{{expense.paid_by.username}}{% endif %}</option>
+                {% for member in members %}
+                {% if member.id != request.user.id %}
+                <option value="{{member.id}}">{% if member.id == request.user.id %}You{% else %}{{member.username}}{% endif %}</option>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <option value="{{request.user.id}}" selected="selected">You</option>
+                {% for member in members %}
+                {% if member.id != request.user.id %}
+                <option value="{{member.id}}">{{member.username}}</option>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </select>
+            <br/>
+            <label>Split method</label>
+            <select name="splitmethod">
+                <option value="1" selected='selected'>Equal</option>
+                <option value="2">Percentage</option>
+                <option value="3">Custom</option>
+            </select>
+            <br/>
+            <input type='submit' />
+        </form>
+    </body>
+</html>

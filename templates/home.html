@@ -1,60 +1,103 @@
-<h1>Expense Tracker</h1>
-{% if not user.is_authenticated %}
-<a href={% url 'login' %}>Login</a>
-<a href={% url 'signup' %}>Signup</a>
-{% else %}
-<h1>Hi, {{user.username}}</h1>
-<a href='{% url 'logout' %}'>logout</a>
-<h1>Friends</h1>
-<ul><a href='{% url 'friends_page' %}'>Find Friends</a></ul>
-<ul><a href='{% url 'pending_requests' %}'>Pending Requests</a></ul>
-<ul><a href='{% url 'see_friends' %}'>See Friends</a></ul>
-<h1>Groups</h1>
-<ul><a href='{% url 'create_groups' %}'>Create Group</a></ul>
-<ul><a href='{% url 'view_groups' %}'>View Group</a></ul>
-<h1>Expenses</h1>
-<ul><a href='{% url 'view_expenses' %}'>View Expenses</a></ul>
-<h1>Recent Expenses</h1>
-<h2>Outgoing payments</h2>
-<table>
-    <tr>
-        <th>Expense Description</th>
-        <th>Group</th>
-        <th>Amount owed</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-    {% for split in splits %}
-    {% if split.expense.paid_by != request.user %}
-    <tr>
-        <td>{{split.expense.description}}</td>
-        <td>{{split.expense.group.group_name}}</td>
-        <td>{{split.amount}}</td>
-        <td>{{split.expense.date}}</td>
-        <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-</table>
-<h2>Incoming payments</h2>
-<table>
-    <tr>
-        <th>Expense Description</th>
-        <th>Group</th>
-        <th>Pending amount</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-    {% for split in splits %}
-    {% if split.expense.paid_by == request.user %}
-    <tr>
-        <td>{{split.expense.description}}</td>
-        <td>{{split.expense.group.group_name}}</td>
-        <td>{{split.expense.amount}}</td>
-        <td>{{split.expense.date}}</td>
-        <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-</table>
-{% endif %}
+{% extends "header.html" %}
+<html>
+    {% block content %}
+    <head>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                background-color: #fff;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+            th {
+                background-color: #4CAF50;
+                color: #fff;
+                font-weight: bold;
+            }
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            tr:hover {
+                background-color: #ddd;
+            }
+            a {
+                color: #4CAF50;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <div style="padding: 30px;">
+        <body>
+            {% if user.is_authenticated %}
+            <h1>Hi, {{user.username}}</h1>
+            <h1>Friends</h1>
+            <ul>
+                <li><a href='{% url 'friends_page' %}'>Find Friends</a></li>
+                <li><a href='{% url 'pending_requests' %}'>Pending Requests</a></li>
+                <li><a href='{% url 'see_friends' %}'>See Friends</a></li>
+            </ul>
+            <h1>Groups</h1>
+            <ul>
+                <li><a href='{% url 'create_groups' %}'>Create Group</a></li>
+                <li><a href='{% url 'view_groups' %}'>View Group</a></li>
+            </ul>
+            <h1>Expenses</h1>
+            <ul>
+                <li><a href='{% url 'view_expenses' %}'>View Expenses</a></li>
+            </ul>
+            <h1>Recent Expenses</h1>
+            <h2>Outgoing payments</h2>
+            <table>
+                <tr>
+                    <th>Expense Description</th>
+                    <th>Group</th>
+                    <th>Amount owed</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                {% for split in splits %}
+                {% if split.expense.paid_by != request.user %}
+                <tr>
+                    <td>{{split.expense.description}}</td>
+                    <td>{{split.expense.group.group_name}}</td>
+                    <td>{{split.amount}}</td>
+                    <td>{{split.expense.date}}</td>
+                    <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+            <h2>Incoming payments</h2>
+            <table>
+                <tr>
+                    <th>Expense Description</th>
+                    <th>Group</th>
+                    <th>Pending amount</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                {% for split in splits %}
+                {% if split.expense.paid_by == request.user %}
+                <tr>
+                    <td>{{split.expense.description}}</td>
+                    <td>{{split.expense.group.group_name}}</td>
+                    <td>{{split.expense.amount}}</td>
+                    <td>{{split.expense.date}}</td>
+                    <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+            {% endif %}
+        </body>
+    </div>
+    {% endblock %}
+</html>
