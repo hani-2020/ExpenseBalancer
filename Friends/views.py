@@ -13,9 +13,12 @@ def friends_page(request):
             results = User.objects.filter(Q(username__icontains=search_query) | Q(email__icontains=search_query))
             friend_ids = request.user.friends.values_list('id', flat=True)
             results = results.exclude(Q(id=request.user.id) | Q(id__in=friend_ids))
-            context['results'] = results
+            if results:
+                context['results'] = results
+            else:
+                context['error'] = 'No such user available'
         else:
-            context['error'] = 'No such user'
+            context['error'] = 'Enter a username or email'
     return render(request, 'friends.html', context)
 
 @login_required

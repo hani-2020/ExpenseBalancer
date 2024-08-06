@@ -1,4 +1,5 @@
 {% extends "header.html" %}
+<!DOCTYPE html>
 <html>
     {% block content %}
     <head>
@@ -18,9 +19,6 @@
                 background-color: #4CAF50;
                 color: #fff;
                 font-weight: bold;
-            }
-            tr:nth-child(even) {
-                background-color: #f2f2f2;
             }
             tr:hover {
                 background-color: #ddd;
@@ -57,7 +55,7 @@
             <h2>Outgoing payments</h2>
             <table>
                 <tr>
-                    <th>Expense Description</th>
+                    <th>Requested by</th>
                     <th>Group</th>
                     <th>Amount owed</th>
                     <th>Date</th>
@@ -66,7 +64,7 @@
                 {% for split in splits %}
                 {% if split.expense.paid_by != request.user %}
                 <tr>
-                    <td>{{split.expense.description}}</td>
+                    <td>{{split.expense.paid_by.username}}</td>
                     <td>{{split.expense.group.group_name}}</td>
                     <td>{{split.amount}}</td>
                     <td>{{split.expense.date}}</td>

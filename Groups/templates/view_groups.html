@@ -1,43 +1,208 @@
-<h1>Your Groups</h1>
-{% if error %}
-<div>{{error}}</div>
-{% endif %}
-<table>
-    <tr>
-        <th>Group Name</th>
-        <th>
-            <table>
-                <tr>
-                    <th>Members</th>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                </tr>
-            </table>
-        </th>
-        <th>Action</th>
-        <th>Expense Actions</th>
-    </tr>
-{% for group in groups %}
-<tr>
-    <td><a href="{% url 'view_group_expenses' group_id=group.id %}">{{group.group_name}}</a></td>
-    <td>
+{% extends "header.html" %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Your Groups</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+            
+            h1 {
+                color: #333;
+                margin-bottom: 20px;
+            }
+    
+            .error {
+                color: red;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+    
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+    
+            th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+    
+            th {
+                background-color: #f2f2f2;
+            }
+    
+            td a {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            td a:hover {
+                text-decoration: underline;
+            }
+    
+            .inner-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+    
+            .inner-table th, .inner-table td {
+                border: none;
+                padding: 8px;
+            }
+    
+            .inner-table th {
+                background-color: #e9ecef;
+            }
+    
+            .action-links a {
+                color: #007bff;
+                text-decoration: none;
+                padding: 5px;
+            }
+    
+            .action-links a:hover {
+                text-decoration: underline;
+            }
+    
+            .expense-actions a {
+                display: block;
+                background-color: #28a745;
+                color: white;
+                padding: 10px;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                margin-top: 5px;
+            }
+    
+            .expense-actions a:hover {
+                background-color: #218838;
+            }
+    
+            .no-groups {
+                color: #666;
+                font-style: italic;
+                text-align: center;
+            }
+    
+            .members-list {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Your Groups</h1>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
         <table>
-            {% for member in group.members.all %}
+            <thead>
+                <tr>
+                    <th>Group Name</th>
+                    <th style="display:flex; justify-content:center;">Members</th>
+                    <th>Action</th>
+                    <th>Expense Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for group in groups %}
             <tr>
-                <td>{% if member.id == request.user.id %}You{% else %}{{member.username}}{% endif %}</td>
-                <td>{{member.email}}</td>
+                <td><a href="{% url 'view_group_expenses' group_id=group.id %}">{{ group.group_name }}</a></td>
+                <td>
+                    <table class="inner-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in group.members.all %}
+                            <tr>
+                                <td>{% if member.id == request.user.id %}You{% else %}{{ member.username }}{% endif %}</td>
+                                <td>{{ member.email }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+                <td class="action-links">
+                    <a href="{% url 'edit_group' id=group.id %}">Edit</a>
+                    {% if request.user == group.created_by %}
+                        | <a href='{% url 'delete_group' group.id %}' >Delete</a>
+                    {% else %}
+                        | <a href='{% url 'leave_group' group.id %}' >Leave Group</a>
+                    {% endif %}
+                </td>
+                <td class="expense-actions">
+                    <a href="{% url 'create_expense' id=group.id %}">Create Expenses</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="no-groups">You have no groups</td>
             </tr>
             {% endfor %}
+            </tbody>
         </table>
-    </td>
-    <td><a href="{% url 'edit_group' id=group.id %}">Edit</a>{% if request.user == group.created_by %} | <a href='{% url 'delete_group' group.id %}' >Delete</a> {% else %} | <a href='{% url 'leave_group' group.id %}' >Leave Group</a> {% endif %}</td>
-    <td><ul><a href="{% url 'create_expense' id=group.id %}">Create Expenses</a></ul></td>
-</tr>
-{% empty %}
-<h1>You have no groups</h1>
-{% endfor %}
-</table>
+    </body>
+    {% comment %} <head>
+    </head>
+    <body>
+        <h1>Your Groups</h1>
+        {% if error %}
+        <div>{{error}}</div>
+        {% endif %}
+        <table>
+            <tr>
+                <th>Group Name</th>
+                <th>
+                    <table>
+                        <tr>
+                            <th>Members</th>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                        </tr>
+                    </table>
+                </th>
+                <th>Action</th>
+                <th>Expense Actions</th>
+            </tr>
+        {% for group in groups %}
+        <tr>
+            <td><a href="{% url 'view_group_expenses' group_id=group.id %}">{{group.group_name}}</a></td>
+            <td>
+                <table>
+                    {% for member in group.members.all %}
+                    <tr>
+                        <td>{% if member.id == request.user.id %}You{% else %}{{member.username}}{% endif %}</td>
+                        <td>{{member.email}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td><a href="{% url 'edit_group' id=group.id %}">Edit</a>{% if request.user == group.created_by %} | <a href='{% url 'delete_group' group.id %}' >Delete</a> {% else %} | <a href='{% url 'leave_group' group.id %}' >Leave Group</a> {% endif %}</td>
+            <td><ul><a href="{% url 'create_expense' id=group.id %}">Create Expenses</a></ul></td>
+        </tr>
+        {% empty %}
+        <h1>You have no groups</h1>
+        {% endfor %}
+        </table>
+    </body> {% endcomment %}
+    {% endblock %}
+</html>

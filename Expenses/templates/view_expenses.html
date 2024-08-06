@@ -1,45 +1,86 @@
-<h1>View all your expenses</h1>
-<h2>Outgoing Payments</h2>
-<table>
-    <tr>
-        <th>Total Expense</th>
-        <th>Expense Description</th>
-        <th>Group</th>
-        <th>Amount owed</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-    {% for split in splits %}
-    {% if split.expense.paid_by != request.user %}
-    <tr>
-        <td>{{split.expense.amount}}</td>
-        <td>{{split.expense.description}}</td>
-        <td>{{split.expense.group.group_name}}</td>
-        <td>{{split.amount}}</td>
-        <td>{{split.expense.date}}</td>
-        <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-</table>
-<h2>Incoming Payments</h2>
-<table>
-    <tr>
-        <th>Total Expense</th>
-        <th>Expense Description</th>
-        <th>Group</th>
-        <th>Pending Amount</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-    {% for expense in expenses %}
-    <tr>
-        <td>{{expense.amount}}</td>
-        <td>{{expense.description}}</td>
-        <td>{{expense.group.group_name}}</td>
-        <td>{{expense.amount_owed}}</td>
-        <td>{{expense.date}}</td>
-        <td><a href="{% url 'edit_expense' expense_id=expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=expense.id %}">Delete</a> | <a href="{% url 'view_expense_breakup' expense_id=expense.id %}">View</a></td>
-    </tr>
-    {% endfor %}
-</table>
+{% extends 'header.html' %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <title>View Expenses</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                background-color: #fff;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+            th {
+                background-color: #4CAF50;
+                color: #fff;
+                font-weight: bold;
+            }
+            tr:hover {
+                background-color: #ddd;
+            }
+            a {
+                color: #4CAF50;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="padding:30px">
+            <h1>View all your expenses</h1>
+            <h2>Outgoing Payments</h2>
+            <table>
+                <tr>
+                    <th>Requested by</th>
+                    <th>Expense Description</th>
+                    <th>Group</th>
+                    <th>Amount owed</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                {% for split in splits %}
+                {% if split.expense.paid_by != request.user %}
+                <tr>
+                    <td>{{split.expense.paid_by.username}}</td>
+                    <td>{{split.expense.description}}</td>
+                    <td>{{split.expense.group.group_name}}</td>
+                    <td>{{split.amount}}</td>
+                    <td>{{split.expense.date}}</td>
+                    <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+            <h2>Incoming Payments</h2>
+            <table>
+                <tr>
+                    <th>Total Expense</th>
+                    <th>Expense Description</th>
+                    <th>Group</th>
+                    <th>Pending Amount</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{expense.amount}}</td>
+                    <td>{{expense.description}}</td>
+                    <td>{{expense.group.group_name}}</td>
+                    <td>{{expense.amount_owed}}</td>
+                    <td>{{expense.date}}</td>
+                    <td><a href="{% url 'edit_expense' expense_id=expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=expense.id %}">Delete</a> | <a href="{% url 'view_expense_breakup' expense_id=expense.id %}">View</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+                </body>
+        </div>
+    {% endblock %}
+</html>

@@ -1,17 +1,73 @@
-<h1>Expense Breakup</h1>
-<h2>Total Amount: {{expense.amount}}</h2>
-<h2>Pay to: {{expense.paid_by.username}}</h2>
-<table>
-    {% for split in splits %}
-    <tr>
-        <td>
-            <h3>{{split.amount}} by {{split.payer.username}}</h3>
-        </td>
-        <td>
-            {% if split.payer == request.user and split.payer != expense.paid_by %}
-            <h3><a href="{% url 'pay_expense' split_id=split.id %}">Pay</a></h3>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% extends 'header.html' %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <title>Expense Breakup</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+            h2 {
+                font-size: 20px;
+                color: #333;
+                margin: 10px 0;
+            }
+            table {
+                width: 100%;
+                max-width: 800px;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            th, td {
+                padding: 15px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            th {
+                background-color: #007bff;
+                color: white;
+                font-weight: bold;
+            }
+            tr:hover {
+                background-color: #f1f1f1;
+            }
+            a {
+                color: #007bff;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="padding:30px">
+            <h1>Expense Breakup</h1>
+            <h2>Total Amount: {{expense.amount}}</h2>
+            <h2>Pay to: {{expense.paid_by.username}}</h2>
+            <table>
+                {% for split in splits %}
+                <tr>
+                    <td>
+                        <h3>{{split.amount}} by {{split.payer.username}}</h3>
+                    </td>
+                    <td>
+                        {% if split.payer == request.user and split.payer != expense.paid_by %}
+                        <h3><a href="{% url 'pay_expense' split_id=split.id %}">Pay</a></h3>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+                </body>
+        </div>
+    {% endblock %}
+</html>

@@ -1,25 +1,65 @@
-<h1>All group expenses</h1>
-<table>
-    <tr>
-        <th>Requested By</th>
-        <th>Description</th>
-        <th>Amount owed</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-    {% for item in expense_list %}
-        <tr>
-            <td>{{item.expense.paid_by.username}}</td>
-            <td>{{item.expense.description}}</td>
-            {% if item.expense.paid_by == request.user %}
-            <td>None</td>
-            <td>{{item.expense.date}}</td>
-            <td><a href="{% url 'edit_expense' expense_id=item.expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=item.expense.id %}">Delete</a>{% if item.split.amount or item.expense.paid_by == request.user %} | <a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% endif %}</td>
-            {% else %}
-            <td>{% if item.split.amount %}{{item.split.amount}}{% else %}None{% endif %}</td>
-            <td>{{item.expense.date}}</td>
-            <td>{% if item.split.amount %}<a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% else %}None{% endif %}</td>
-            {% endif %}
-        </tr>
-    {% endfor %}
-</table>
+{% extends 'header.html' %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                background-color: #fff;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+            th {
+                background-color: #4CAF50;
+                color: #fff;
+                font-weight: bold;
+            }
+            tr:hover {
+                background-color: #ddd;
+            }
+            a {
+                color: #4CAF50;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="padding:30px">
+            <h1>All group expenses</h1>
+            <table>
+                <tr>
+                    <th>Requested By</th>
+                    <th>Description</th>
+                    <th>Amount owed</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                {% for item in expense_list %}
+                    <tr>
+                        <td>{{item.expense.paid_by.username}}</td>
+                        <td>{{item.expense.description}}</td>
+                        {% if item.expense.paid_by == request.user %}
+                        <td>None</td>
+                        <td>{{item.expense.date}}</td>
+                        <td><a href="{% url 'edit_expense' expense_id=item.expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=item.expense.id %}">Delete</a>{% if item.split.amount or item.expense.paid_by == request.user %} | <a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% endif %}</td>
+                        {% else %}
+                        <td>{% if item.split.amount %}{{item.split.amount}}{% else %}None{% endif %}</td>
+                        <td>{{item.expense.date}}</td>
+                        <td>{% if item.split.amount %}<a href="{% url 'view_expense_breakup' expense_id=item.expense.id %}">View</a>{% else %}None{% endif %}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </body>
+    {% endblock %}
+</html>

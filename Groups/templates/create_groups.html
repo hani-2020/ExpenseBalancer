@@ -1,26 +1,108 @@
-{% if request.resolver_match.url_name == "edit_group" %}
-<h1>Edit Groups</h1>
-{% else %}
-<h1>Create Groups</h1>
-{% endif %}
-<form method='post' {% if request.resolver_match.url_name == "edit_group" %}action='{% url 'edit_group' group.id %}'{% else %}action='{% url 'create_groups' %}'{% endif %}>
-    {% csrf_token %}
-    <label>Group name</label>
-    <br/>
-    <input type='text' name='group_name' {% if request.resolver_match.url_name == "edit_group" %} value={{group.group_name}} {% endif %}/>
-    {% if error %}
-    <div>{{error}}</div>
-    {% endif %}
-    <br/>
-    <label>Select group members</label>
-    <br/>
-    {% for friend in friends %}
-    <input type='checkbox' name='friends' value='{{friend.id}}' />
-    <label>{{friend.username}}</label>
-    <label>{{friend.email}}</label>
-    <br/>
-    {% empty %}
-    <h1>You have no friends to invite</h1>
-    {% endfor %}
-    <input type='submit' />
-</form>
+{% extends "header.html" %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+    
+            h1 {
+                font-size: 28px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+    
+            form {
+                width: 100%;
+                max-width: 600px;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+            }
+    
+            label {
+                font-size: 16px;
+                color: #333;
+                margin-bottom: 5px;
+            }
+    
+            input[type='text'] {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 16px;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+    
+            input[type='checkbox'] {
+                margin-right: 10px;
+            }
+    
+            .friend-label {
+                display: inline-block;
+                margin-right: 20px;
+            }
+    
+            .error {
+                color: #d9534f;
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+    
+            .submit-button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-top: 20px;
+            }
+    
+            .submit-button:hover {
+                background-color: #0056b3;
+            }
+    
+            .no-friends-message {
+                color: #d9534f;
+                font-size: 18px;
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+    <div style="padding:20px">
+        <h1>{% if request.resolver_match.url_name == "edit_group" %}Edit Groups{% else %}Create Groups{% endif %}</h1>
+        <form method='post' {% if request.resolver_match.url_name == "edit_group" %}action='{% url 'edit_group' group.id %}'{% else %}action='{% url 'create_groups' %}'{% endif %}>
+            {% csrf_token %}
+            <label>Group name</label>
+            <input type='text' name='group_name' {% if request.resolver_match.url_name == "edit_group" %} value="{{group.group_name}}" {% endif %}/>
+            {% if error %}
+            <div class="error">{{error}}</div>
+            {% endif %}
+            <label>Select group members</label>
+            {% for friend in friends %}
+            <div>
+                <input type='checkbox' name='friends' value='{{friend.id}}' />
+                <label class="friend-label">{{friend.username}}</label>
+                <label class="friend-label">{{friend.email}}</label>
+            </div>
+            {% empty %}
+            <div class="no-friends-message">You have no friends to invite</div>
+            {% endfor %}
+            <input type='submit' class="submit-button" />
+        </form>
+    </div>
+    </body>
+    {% endblock %}
+</html>

@@ -1,24 +1,107 @@
-<h1>Find new friends</h1>
-<form method='post' action="{% url 'friends_page' %}">
-    {% csrf_token %}
-    <input type='text' name='search' placeholder="email or username"/>
-    <input type='submit' />
-</form>
-<table>
-{% if error %}
-<h1>{{error}}</h1>
-{% else %}
-<tr>
-    <th>username</th>
-    <th>email</th>
-    <th>action</th>
-</tr>
-{% for result in results %}
-<tr>
-    <td>{{result.username}}</td>
-    <td>{{result.email}}</td>
-    <td><a href="{% url 'send_request' result.id %}">Send Request</a></td>
-</tr>
-{% endfor %}
-{% endif %}
-</table>
+{% extends "header.html" %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+            h1 {
+                font-size: 28px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+            form {
+                margin-bottom: 20px;
+            }
+            input[type="text"] {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 16px;
+                width: 250px;
+            }
+            input[type="submit"] {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-left: 10px;
+            }
+            input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+            table {
+                width: 100%;
+                max-width: 800px;
+                border-collapse: collapse;
+                margin-top: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            th, td {
+                padding: 15px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            th {
+                background-color: #007bff;
+                color: white;
+            }
+            tr:hover {
+                background-color: #f1f1f1;
+            }
+            a {
+                color: #007bff;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .error {
+                color: #d9534f;
+                font-size: 20px;
+                margin: 20px 0;
+            }
+        </style>
+    </head>
+    <body>
+    <div style="padding:30px">
+        <h1>Find New Friends</h1>
+        <form method='post' action="{% url 'friends_page' %}">
+            {% csrf_token %}
+            <input type='text' name='search' placeholder="email or username"/>
+            <input type='submit' value='Search'/>
+        </form>
+        <table>
+            {% if error %}
+            <tr>
+                <td colspan="3" class="error">{{error}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+            {% for result in results %}
+            <tr>
+                <td>{{result.username}}</td>
+                <td>{{result.email}}</td>
+                <td><a href="{% url 'send_request' result.id %}">Send Request</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    </body>
+    {% endblock %}
+</html>
