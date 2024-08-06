@@ -54,7 +54,7 @@
                 </tr>
             {% for friend in friends %}
             <tr>
-                <td>{{friend.username}}</td>
+                <td><a href="{% url 'see_friend_transanctions' user_id=friend.id %}">{{friend.username}}</a></td>
                 <td>{{friend.email}}</td>
             </tr>
             {% endfor %}

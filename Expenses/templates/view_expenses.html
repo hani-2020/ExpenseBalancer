@@ -73,7 +73,7 @@
                 <tr>
                     <td>{{expense.amount}}</td>
                     <td>{{expense.description}}</td>
-                    <td>{{expense.group.group_name}}</td>
+                    <td>{{expense.group_name}}</td>
                     <td>{{expense.amount_owed}}</td>
                     <td>{{expense.date}}</td>
                     <td><a href="{% url 'edit_expense' expense_id=expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=expense.id %}">Delete</a> | <a href="{% url 'view_expense_breakup' expense_id=expense.id %}">View</a></td>

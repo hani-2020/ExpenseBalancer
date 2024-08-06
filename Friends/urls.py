@@ -7,5 +7,6 @@ urlpatterns = [
     path('pending_requests/', views.pending_requests, name='pending_requests'),
     path('accept_request/<int:id>/', views.accept_request, name='accept_request'),
     path('reject_request/<int:id>/', views.reject_request, name='reject_request'),
-    path('see_friends', views.see_friends, name='see_friends')
+    path('see_friends/', views.see_friends, name='see_friends'),
+    path('see_friend_transanctions/<int:user_id>/', views.see_friend_transanctions, name='see_friend_transanctions')
 ]

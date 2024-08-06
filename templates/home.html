@@ -89,7 +89,7 @@
                     <td>{{split.expense.group.group_name}}</td>
                     <td>{{split.expense.amount}}</td>
                     <td>{{split.expense.date}}</td>
-                    <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
+                    <td><a href="{% url 'edit_expense' expense_id=split.expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=split.expense.id %}">Delete</a> | <a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
                 </tr>
                 {% endif %}
                 {% endfor %}

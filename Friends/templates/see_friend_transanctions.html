@@ -1,0 +1,118 @@
+{% extends 'header.html' %}
+<!DOCTYPE html>
+<html>
+    {% block content %}
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+    
+            h1, h2 {
+                color: #333;
+                margin-bottom: 20px;
+            }
+    
+            h2 {
+                margin-top: 40px;
+                border-bottom: 2px solid #ddd;
+                padding-bottom: 10px;
+            }
+    
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 40px;
+            }
+    
+            th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+    
+            th {
+                background-color: #f2f2f2;
+            }
+    
+            td a {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            td a:hover {
+                text-decoration: underline;
+            }
+    
+            .action-links a {
+                color: #007bff;
+                text-decoration: none;
+                margin-right: 10px;
+            }
+    
+            .action-links a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>{{ friend.username }} Payments</h1>
+    
+        <h2>Outgoing Payments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Requested by</th>
+                    <th>Expense Description</th>
+                    <th>Group</th>
+                    <th>Amount owed</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for split in outgoing_payments %}
+            <tr>
+                <td>{{ split.expense.paid_by.username }}</td>
+                <td>{{ split.expense.description }}</td>
+                <td>{{ split.expense.group.group_name }}</td>
+                <td>{{ split.amount }}</td>
+                <td>{{ split.expense.date }}</td>
+                <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    
+        <h2>Incoming Payments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Amount owed</th>
+                    <th>Expense Description</th>
+                    <th>Group</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for split in incoming_payments %}
+            <tr>
+                <td>{{ split.amount }}</td>
+                <td>{{ split.expense.description }}</td>
+                <td>{{ split.expense.group.group_name }}</td>
+                <td>{{ split.expense.date }}</td>
+                <td class="action-links">
+                    <a href="{% url 'edit_expense' expense_id=split.expense.id %}">Edit</a> |
+                    <a href="{% url 'delete_expense' expense_id=split.expense.id %}">Delete</a> |
+                    <a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    {% endblock %}
+</html>

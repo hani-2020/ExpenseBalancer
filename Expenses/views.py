@@ -171,8 +171,3 @@ def pay_expense(request, split_id):
         return render(request, 'view_expense_breakup.html', context)
     split.delete()
     return redirect('homepage')
-
-#to do
-#unit testing (must learn, will probably have to add alot of validations, change login page to forms)
-#remove unwanted fields from models
-#ui (make this look cleaner. bootstrap???)

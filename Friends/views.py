@@ -53,3 +53,21 @@ def reject_request(request, id):
 def see_friends(request):
     friends = request.user.friends.all()
     return render(request, 'see_friends.html', {'friends':friends})
+
+@login_required
+def see_friend_transanctions(request, user_id):
+    user = User.objects.get(id=user_id)
+    splits = user.expenses_payer.all()
+    context = {'friend':user}
+    incoming_payments = []
+    for split in splits:
+        if split.expense.paid_by == request.user:
+            incoming_payments.append(split)
+    context['incoming_payments'] = incoming_payments
+    splits = request.user.expenses_payer.all()
+    outgoing_payments = []
+    for split in splits:
+        if split.expense.paid_by == user:
+            outgoing_payments.append(split)
+    context['outgoing_payments'] = outgoing_payments
+    return render(request, 'see_friend_transanctions.html', context)
