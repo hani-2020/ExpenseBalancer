@@ -172,16 +172,6 @@ def pay_expense(request, split_id):
 
 @login_required
 def debtors_creditors(request):
-    # splits = Split.objects.filter(payer=request.user)
-    # expenses = []
-    # for split in splits:
-    #     expenses.append(split.expense)
-    # friends = []
-    # for expense in expenses:
-    #     splits = Split.objects.filter(expense=expense)
-    #     for split in splits:
-    #         if split.payer != request.user and split.payer not in friends:
-    #             friends.append(split.payer)
     friends = []
     expenses = Expenses.objects.filter(paid_by=request.user)
     for expense in expenses:
