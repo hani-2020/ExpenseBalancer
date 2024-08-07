@@ -1,15 +1,29 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import CustomUserCreationForm
-from Expenses.models import Split
+from Expenses.models import Split, Expenses
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
-    context = {}
-    if request.user.is_authenticated:
-        splits = Split.objects.filter(payer=request.user)[:5]
-        context["splits"] = splits
+    if not request.user.is_authenticated:
+        return HttpResponse("Not authorized")
+    incoming_payments = []
+    outgoing_payments = []
+    outgoing_splits = Split.objects.filter(payer=request.user)
+    for outgoing_split in outgoing_splits:
+        if outgoing_split.expense.paid_by != request.user:
+            outgoing_payments.append(outgoing_split)
+    incoming_expenses = Expenses.objects.filter(paid_by=request.user)
+    for incoming_expense in incoming_expenses:
+        incoming_splits = Split.objects.filter(expense=incoming_expense)
+        for incoming_split in incoming_splits:
+            if incoming_split.payer != incoming_expense.paid_by:
+                incoming_payments.append(incoming_split)
+    context = {
+        "incoming_payments":incoming_payments[:5],
+        "outgoing_payments":outgoing_payments[:5]
+    }
     return render(request, 'home.html', context)
 
 def signup(request):

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from Authentications.models import User
 from django.db.models import Q
 from .models import FriendRequests
+from Expenses.models import Split
 from django.contrib.auth.decorators import login_required
 
 @login_required

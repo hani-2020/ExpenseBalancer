@@ -46,7 +46,7 @@
     </head>
     <body>
         <div style="padding:30px">
-            <h1>See Friends</h1>
+            {% if 'friends' in request.path %}<h1>See Friends</h1>{% else %}<h1>Debtors and creditors</h1>{% endif %}
             <table>
                 <tr>
                     <th>username</th>

@@ -89,24 +89,22 @@ def save_split(request, expense_id):
 
 @login_required
 def view_expenses(request):
-    splits =  Split.objects.filter(payer=request.user)
-    expenses = Expenses.objects.filter(paid_by=request.user)
-    expenselist = []
-    for expense in expenses:
-        split = Split.objects.filter(expense=expense, payer=request.user).first()
-        amount = 0
-        if split:
-            amount = expense.amount - split.amount
-        temp = {
-            'id':expense.id,
-            'amount':expense.amount,
-            'description':expense.description,
-            'group_name':expense.group.group_name,
-            'amount_owed':amount,
-            'date':expense.date
-        }
-        expenselist.append(temp)
-    context = {'splits':splits, 'expenses':expenselist}
+    incoming_payments = []
+    outgoing_payments = []
+    outgoing_splits = Split.objects.filter(payer=request.user)
+    for outgoing_split in outgoing_splits:
+        if outgoing_split.expense.paid_by != request.user:
+            outgoing_payments.append(outgoing_split)
+    incoming_expenses = Expenses.objects.filter(paid_by=request.user)
+    for incoming_expense in incoming_expenses:
+        incoming_splits = Split.objects.filter(expense=incoming_expense)
+        for incoming_split in incoming_splits:
+            if incoming_split.payer != incoming_expense.paid_by:
+                incoming_payments.append(incoming_split)
+    context = {
+        "incoming_payments":incoming_payments,
+        "outgoing_payments":outgoing_payments
+    }
     return render(request, 'view_expenses.html', context)
 
 @login_required
@@ -171,3 +169,35 @@ def pay_expense(request, split_id):
         return render(request, 'view_expense_breakup.html', context)
     split.delete()
     return redirect('homepage')
+
+@login_required
+def debtors_creditors(request):
+    # splits = Split.objects.filter(payer=request.user)
+    # expenses = []
+    # for split in splits:
+    #     expenses.append(split.expense)
+    # friends = []
+    # for expense in expenses:
+    #     splits = Split.objects.filter(expense=expense)
+    #     for split in splits:
+    #         if split.payer != request.user and split.payer not in friends:
+    #             friends.append(split.payer)
+    friends = []
+    expenses = Expenses.objects.filter(paid_by=request.user)
+    for expense in expenses:
+        splits = Split.objects.filter(expense=expense)
+        for split in splits:
+            if split.payer != request.user and split.payer not in friends:
+                friends.append(split.payer)
+    splits = Split.objects.filter(payer=request.user)
+    expenses = []
+    for split in splits:
+        expenses.append(split.expense)
+    for expense in expenses:
+        splits = Split.objects.filter(expense=expense)
+        for split in splits:
+            if split.payer != request.user and split.payer not in friends:
+                friends.append(split.payer)
+            if expense.paid_by != request.user and expense.paid_by not in friends:
+                friends.append(expense.paid_by)
+    return render(request, 'see_friends.html', {'friends':friends})

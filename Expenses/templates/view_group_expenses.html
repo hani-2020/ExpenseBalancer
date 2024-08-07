@@ -45,7 +45,7 @@
                 </tr>
                 {% for item in expense_list %}
                     <tr>
-                        <td>{{item.expense.paid_by.username}}</td>
+                        {% if item.expense.paid_by == request.user %}<td>You</td>{% else %}<td><a href="{% url 'see_friend_transanctions' user_id=item.expense.paid_by.id %}">{{item.expense.paid_by.username}}</a></td>{% endif %}
                         <td>{{item.expense.description}}</td>
                         {% if item.expense.paid_by == request.user %}
                         <td>None</td>

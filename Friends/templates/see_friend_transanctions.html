@@ -64,10 +64,9 @@
         <table>
             <thead>
                 <tr>
-                    <th>Requested by</th>
+                    <th>Amount owed</th>
                     <th>Expense Description</th>
                     <th>Group</th>
-                    <th>Amount owed</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
@@ -75,10 +74,9 @@
             <tbody>
             {% for split in outgoing_payments %}
             <tr>
-                <td>{{ split.expense.paid_by.username }}</td>
+                <td>{{ split.amount }}</td>
                 <td>{{ split.expense.description }}</td>
                 <td>{{ split.expense.group.group_name }}</td>
-                <td>{{ split.amount }}</td>
                 <td>{{ split.expense.date }}</td>
                 <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
             </tr>
@@ -105,8 +103,6 @@
                 <td>{{ split.expense.group.group_name }}</td>
                 <td>{{ split.expense.date }}</td>
                 <td class="action-links">
-                    <a href="{% url 'edit_expense' expense_id=split.expense.id %}">Edit</a> |
-                    <a href="{% url 'delete_expense' expense_id=split.expense.id %}">Delete</a> |
                     <a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a>
                 </td>
             </tr>

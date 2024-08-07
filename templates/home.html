@@ -50,48 +50,49 @@
             <h1>Expenses</h1>
             <ul>
                 <li><a href='{% url 'view_expenses' %}'>View Expenses</a></li>
+                <li><a href='{% url 'debtors_creditors' %}'>Debtors and Creditors</a></li>
             </ul>
             <h1>Recent Expenses</h1>
             <h2>Outgoing payments</h2>
             <table>
                 <tr>
                     <th>Requested by</th>
+                    <th>Expense Description</th>
                     <th>Group</th>
                     <th>Amount owed</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
-                {% for split in splits %}
-                {% if split.expense.paid_by != request.user %}
+                {% for split in outgoing_payments %}
                 <tr>
-                    <td>{{split.expense.paid_by.username}}</td>
+                    <td><a href="{% url 'see_friend_transanctions' user_id=split.expense.paid_by.id %}">{{split.expense.paid_by.username}}</a></td>
+                    <td>{{split.expense.description}}</td>
                     <td>{{split.expense.group.group_name}}</td>
                     <td>{{split.amount}}</td>
                     <td>{{split.expense.date}}</td>
                     <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
                 </tr>
-                {% endif %}
                 {% endfor %}
             </table>
             <h2>Incoming payments</h2>
             <table>
                 <tr>
+                    <th>Payer</th>
                     <th>Expense Description</th>
                     <th>Group</th>
                     <th>Pending amount</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
-                {% for split in splits %}
-                {% if split.expense.paid_by == request.user %}
+                {% for split in incoming_payments %}
                 <tr>
+                    <td><a href="{% url 'see_friend_transanctions' user_id=split.payer.id %}">{{split.payer.username}}</a></td>
                     <td>{{split.expense.description}}</td>
                     <td>{{split.expense.group.group_name}}</td>
-                    <td>{{split.expense.amount}}</td>
+                    <td>{{split.amount}}</td>
                     <td>{{split.expense.date}}</td>
-                    <td><a href="{% url 'edit_expense' expense_id=split.expense.id %}">Edit</a> | <a href="{% url 'delete_expense' expense_id=split.expense.id %}">Delete</a> | <a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
+                    <td><a href="{% url 'view_expense_breakup' expense_id=split.expense.id %}">View</a></td>
                 </tr>
-                {% endif %}
                 {% endfor %}
             </table>
             {% endif %}
