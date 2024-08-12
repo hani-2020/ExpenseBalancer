@@ -84,9 +84,9 @@ def leave_group(request, id):
 @login_required
 def join_group(request, group_id, user_id):
     group = Group.objects.get(id=group_id)
-    joinlink = JoinLink.objects.filter(group=group_id, invitee=user_id)
     user = User.objects.get(id=user_id)
-    if request.user.is_authenticated and request.user==user:
+    joinlink = JoinLink.objects.filter(group=group, invitee=user)
+    if request.user==user and joinlink.exists():
         group.members.add(request.user)
         group.save()
         joinlink.delete()
